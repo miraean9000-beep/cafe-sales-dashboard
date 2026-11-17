@@ -4,7 +4,8 @@
 __pycache__/
 .vercel/
 frontend/dist/
-*service-account*.json.env.*
+*service-account*.json
+.env.*
 !.env.example
 *firebase-adminsdk*.json
 *.pem
