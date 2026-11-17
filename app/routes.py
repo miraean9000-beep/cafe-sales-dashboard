@@ -14,8 +14,14 @@ from .storage import store
 bearer = HTTPBearer(auto_error=False)
 
 
+def cloud_runtime():
+    return bool(os.getenv("VERCEL") or os.getenv("RENDER"))
+
+
 def authorize(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
-    token = os.getenv("APP_TOKEN")
+    token = os.getenv("APP_TOKEN", "").strip()
+    if cloud_runtime() and (not token or os.getenv("STORAGE") != "firestore"):
+        raise HTTPException(503, "서버의 Firestore 및 접속 토큰 설정이 필요합니다.")
     if token and (
         not credentials or not secrets.compare_digest(credentials.credentials.encode(), token.encode())
     ):

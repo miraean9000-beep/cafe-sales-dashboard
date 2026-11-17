@@ -1,0 +1,11 @@
+.env
+.env.*
+.venv/
+*.sqlite3
+*.sqlite3-*
+*service-account*.json
+*firebase-adminsdk*.json
+*.pem
+*.key
+frontend/dist/
+screenshots/

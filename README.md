@@ -50,6 +50,14 @@ Firestore 초기 데이터는 해당 설정을 적용한 로컬 터미널에서 
 - `POST /api/chat`은 최신 매출 요약을 시스템 지침에 넣고 사용자 메시지 이력을 Claude에 전달합니다. 답변이 완료되면 대화 전체가 자동 저장됩니다.
 - Firestore의 `data`, `conversations` 컬렉션에는 각각 매출과 대화가 저장됩니다. `GET /api/conversations`는 목록용 메타데이터를, `GET /api/conversations/{id}`는 전체 메시지를 반환합니다.
 
+## Vercel 단일 프로젝트 배포
+
+Vercel에서 저장소 루트(`./`)와 **FastAPI** 프리셋을 선택합니다. `main.py`가 화면과 API를 같은 출처에서 제공합니다. 이 구성에는 `API_BASE_URL` 설정이 필요 없습니다.
+
+Vercel 프로젝트의 Production 환경 변수에 `STORAGE=firestore`, `FIREBASE_SERVICE_ACCOUNT_JSON`, `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL=https://copa.codyssey.kr`, `APP_TOKEN`을 설정합니다. Firebase JSON, Claude 키, 접속 토큰은 **Sensitive**로 저장합니다. 재배포 후 주소의 `/docs`에서 API를 확인하고 메인 화면의 **접속 설정**에 접속 토큰을 입력합니다.
+
+과제의 Render 지정 배포에는 아래 절차를 사용합니다.
+
 ## 배포 (Vercel 먼저)
 
 1. 프로젝트를 GitHub 저장소에 올립니다. `.env`와 서비스 계정 키는 로컬에 보관하고 예시 파일의 키 값이 비어 있는지 확인합니다.
