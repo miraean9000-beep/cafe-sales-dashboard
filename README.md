@@ -60,7 +60,7 @@ Firestore 초기 데이터는 해당 설정을 적용한 로컬 터미널에서 
 
 | 대상 | 제출 URL |
 | --- | --- |
-| 프론트엔드 | Vercel 배포 후 입력 |
+| 프론트엔드 | [Vercel 프론트엔드](https://cafe-sales-dashboard-drab.vercel.app) |
 | 백엔드 API | Render 배포 후 입력 |
 | Swagger | Render 배포 주소 + `/docs` |
 
