@@ -1,0 +1,19 @@
+Verified at 2026-11-17 13:35:03 KST
+
+GET https://cafe-sales-dashboard-drab.vercel.app/
+HTTP 200
+Content-Type: text/html; charset=utf-8
+
+GET https://cafe-sales-dashboard-drab.vercel.app/health
+HTTP 200
+Content-Type: application/json
+{"status":"ok"}
+
+GET https://cafe-sales-dashboard-drab.vercel.app/docs
+HTTP 200
+Content-Type: text/html; charset=utf-8
+
+GET https://cafe-sales-dashboard-drab.vercel.app/openapi.json
+HTTP 200
+Content-Type: application/json
+Response body saved as production-openapi.json

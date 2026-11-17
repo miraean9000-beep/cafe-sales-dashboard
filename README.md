@@ -83,6 +83,17 @@ Vercel 프로젝트의 Production 환경 변수에 `STORAGE=firestore`, `FIREBAS
 
 현재 운영 주소는 Vercel 단일 프로젝트입니다. 배포 환경에서 Firestore 일매출 181건과 총매출 USD 230,057.25를 조회했습니다. 서비스의 **접속 설정** 또는 Swagger의 **Authorize**에 운영자가 제공한 접속 토큰을 입력하면 API를 사용할 수 있습니다. 공개 배포의 Claude 채팅은 `ANTHROPIC_API_KEY`를 Production에 등록하고 재배포하면 활성화됩니다. 실제 Claude 응답과 대화 자동 저장은 로컬에서 확인했습니다. Render 배포는 별도 과제 조건입니다.
 
+### 공개 배포 실행 증거
+
+- **프론트엔드** `GET https://cafe-sales-dashboard-drab.vercel.app/` → **HTTP 200**. 공개 주소에서 앱 화면을 캡처했습니다.
+- **백엔드** `GET https://cafe-sales-dashboard-drab.vercel.app/health` → **HTTP 200**, 응답 본문 `{"status":"ok"}`.
+- **Swagger UI** `GET https://cafe-sales-dashboard-drab.vercel.app/docs` → **HTTP 200**. Swagger 화면에서 **GET /health → Try it out → Execute**를 실행해 **200**과 응답 본문을 확인했습니다.
+- **OpenAPI** `GET https://cafe-sales-dashboard-drab.vercel.app/openapi.json` → **HTTP 200**. [실제 HTTP 응답 기록](screenshots/production-http.txt) · [실제 OpenAPI JSON](screenshots/production-openapi.json)
+
+| 공개 프론트엔드 접속 화면 | Swagger UI에서 실행한 헬스 체크 |
+| --- | --- |
+| ![Vercel 공개 주소에서 열린 매출 비서](screenshots/production-frontend.png) | ![Swagger UI에서 GET health를 실행한 HTTP 200 응답](screenshots/production-swagger.png) |
+
 ## 제출 화면
 
 아래 화면은 로컬 데모 데이터를 사용합니다.
