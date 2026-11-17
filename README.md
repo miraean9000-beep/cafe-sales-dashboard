@@ -50,6 +50,15 @@ Firestore 초기 데이터는 해당 설정을 적용한 로컬 터미널에서 
 - `POST /api/chat`은 최신 매출 요약을 시스템 지침에 넣고 사용자 메시지 이력을 Claude에 전달합니다. 답변이 완료되면 대화 전체가 자동 저장됩니다.
 - Firestore의 `data`, `conversations` 컬렉션에는 각각 매출과 대화가 저장됩니다. `GET /api/conversations`는 목록용 메타데이터를, `GET /api/conversations/{id}`는 전체 메시지를 반환합니다.
 
+### 컨텍스트 주입의 장점과 한계
+
+| 장점 | 한계 |
+| --- | --- |
+| 채팅 요청 시 최신 매출을 다시 집계해 기간, 통화, 최근 7일 매출과 직전 7일 매출을 모델에 전달합니다. 답변이 저장된 수치에 근거할 가능성이 높아지고, 매출 수정도 다음 질문에 반영됩니다. | 요약과 대화 이력은 매 요청마다 입력 토큰을 사용합니다. 이력이 길수록 비용과 지연이 늘고 모델의 컨텍스트 한도에 도달할 수 있습니다. 요약에 빠진 날짜별 세부 정보는 답변 근거가 부족할 수 있습니다. |
+| 전체 일별 시계열을 보내는 대신 집계값을 전달해 입력 크기를 줄입니다. | 최고 매출일의 메모와 채팅 내용은 모델 제공자에게 전달됩니다. 현재 자동 마스킹은 없으므로 고객 개인정보, API 키, 내부 기밀은 메모와 질문에 입력하지 않습니다. |
+
+프롬프트에서는 그래프용 일별 배열 `series`를 제외하고 최고 매출일 메모를 최대 5개로 제한합니다. 채팅 요청 이력은 최대 59개 메시지, 메시지당 4,000자입니다. 출력은 최대 1,000토큰으로 설정합니다. 입력 제한은 메시지 개수와 글자 수 기준이며 별도의 토큰 예산 계산은 적용하지 않습니다.
+
 ## Vercel 단일 프로젝트 배포
 
 Vercel에서 저장소 루트(`./`)와 **FastAPI** 프리셋을 선택합니다. `main.py`가 화면과 API를 같은 출처에서 제공합니다. 이 구성에는 `API_BASE_URL` 설정이 필요 없습니다.
@@ -68,11 +77,9 @@ Vercel 프로젝트의 Production 환경 변수에 `STORAGE=firestore`, `FIREBAS
 
 ## 현재 배포 주소
 
-| 대상 | 주소 |
-| --- | --- |
-| 프론트엔드 | [카페 매출 비서](https://cafe-sales-dashboard-drab.vercel.app/) |
-| 백엔드 | [FastAPI 상태 확인](https://cafe-sales-dashboard-drab.vercel.app/health) |
-| Swagger | [API 문서](https://cafe-sales-dashboard-drab.vercel.app/docs) |
+| 프론트엔드 URL | 백엔드 Health URL | Swagger URL |
+| --- | --- | --- |
+| [카페 매출 비서](https://cafe-sales-dashboard-drab.vercel.app/) | [FastAPI 상태 확인](https://cafe-sales-dashboard-drab.vercel.app/health) | [API 문서](https://cafe-sales-dashboard-drab.vercel.app/docs) |
 
 현재 운영 주소는 Vercel 단일 프로젝트입니다. 배포 환경에서 Firestore 일매출 181건과 총매출 USD 230,057.25를 조회했습니다. 서비스의 **접속 설정** 또는 Swagger의 **Authorize**에 운영자가 제공한 접속 토큰을 입력하면 API를 사용할 수 있습니다. 공개 배포의 Claude 채팅은 `ANTHROPIC_API_KEY`를 Production에 등록하고 재배포하면 활성화됩니다. 실제 Claude 응답과 대화 자동 저장은 로컬에서 확인했습니다. Render 배포는 별도 과제 조건입니다.
 
@@ -83,3 +90,15 @@ Vercel 프로젝트의 Production 환경 변수에 `STORAGE=firestore`, `FIREBAS
 | 채팅과 매출 요약 | 매출 저장 | 대화 기록 |
 | --- | --- | --- |
 | ![채팅](screenshots/chat.png) | ![매출 관리](screenshots/sales.png) | ![대화 목록](screenshots/history.png) [불러온 대화 화면](screenshots/history-loaded.png) |
+
+
+### 모바일 사용성 검증
+
+Chromium의 **390 × 844 CSS 픽셀 터치 뷰포트**에서 로컬 SQLite 샘플과 데모 답변으로 검증했습니다.
+
+- **채팅과 차트**에서 Enter로 질문을 전송하면 입력창이 즉시 비워지고 비교 답변이 표시됩니다. 차트는 채팅 아래에 한 열로 배치되며 화면 너비에 맞춰 축소됩니다.
+- **데이터 편집**에서 첫 행의 수정 버튼을 터치해 금액을 바꾸고 저장한 뒤, 저장 메시지와 목록의 새 금액을 확인했습니다. 넓은 표는 표 영역 안에서 가로 스크롤되고 페이지 전체에는 가로 넘침이 없었습니다.
+
+| 모바일 질문·답변 및 차트 | 모바일 데이터 수정 후 저장 |
+| --- | --- |
+| ![모바일에서 전송한 질문과 매출 비교 답변 및 차트](screenshots/mobile-chat.png) | ![모바일에서 매출을 수정한 뒤 표시되는 저장 메시지와 갱신된 목록](screenshots/mobile-sales.png) |
