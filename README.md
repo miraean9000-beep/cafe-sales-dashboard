@@ -66,11 +66,15 @@ Vercel 프로젝트의 Production 환경 변수에 `STORAGE=firestore`, `FIREBAS
 4. Vercel의 **Settings → Environment Variables**에서 `API_BASE_URL`에 Render의 HTTPS 출처를 입력하고 배포를 다시 실행합니다.
 5. Vercel에서 접속 토큰으로 매출 조회와 채팅을 확인하고 Render의 `/docs`를 엽니다. 무료 Render 서버의 첫 요청은 지연될 수 있습니다.
 
-| 대상 | 제출 URL |
+## 현재 배포 주소
+
+| 대상 | 주소 |
 | --- | --- |
-| 프론트엔드 | [Vercel 프론트엔드](https://cafe-sales-dashboard-drab.vercel.app) |
-| 백엔드 API | Render 배포 후 입력 |
-| Swagger | Render 배포 주소 + `/docs` |
+| 프론트엔드 | [카페 매출 비서](https://cafe-sales-dashboard-drab.vercel.app/) |
+| 백엔드 | [FastAPI 상태 확인](https://cafe-sales-dashboard-drab.vercel.app/health) |
+| Swagger | [API 문서](https://cafe-sales-dashboard-drab.vercel.app/docs) |
+
+현재 운영 주소는 Vercel 단일 프로젝트입니다. 배포 환경에서 Firestore 일매출 181건과 총매출 USD 230,057.25를 조회했습니다. 서비스의 **접속 설정** 또는 Swagger의 **Authorize**에 운영자가 제공한 접속 토큰을 입력하면 API를 사용할 수 있습니다. 공개 배포의 Claude 채팅은 `ANTHROPIC_API_KEY`를 Production에 등록하고 재배포하면 활성화됩니다. 실제 Claude 응답과 대화 자동 저장은 로컬에서 확인했습니다. Render 배포는 별도 과제 조건입니다.
 
 ## 제출 화면
 
